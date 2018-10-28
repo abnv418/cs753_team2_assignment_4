@@ -199,6 +199,47 @@ public class LuceneSearcher {
 
     }
 
+/* Creating Unigram Language Model with Laplace Smoothing with alpha=1 */
+
+
+
+
+
+    public void laplacesmoothing(){
+
+
+float probability;
+float numtermspertype=0;
+float totalterms=0;
+float laplacesmoothing;
+float v=0;
+/* V is the distinct type of terms*/
+
+/* For calculating the total number of terms*/
+
+        for(Data.Page u:pages){
+
+            totalterms+=totalterms;
+
+        }
+
+
+
+
+probability= (numtermspertype/totalterms);
+
+
+laplacesmoothing= (numtermspertype+1/totalterms+ v);
+
+
+
+
+
+
+
+
+    }
+
     public static void main (String [] args) throws IOException {
         LuceneSearcher searcher1 = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
 //        searcher1.run();
