@@ -87,10 +87,7 @@ public class LuceneSearcher {
         }
     }
 
-
-
     public void laplacesmoothing(){
-
 
         float probability;
         float numtermspertype=0;
@@ -107,21 +104,8 @@ public class LuceneSearcher {
 
         }
 
-
-
-
         probability= (numtermspertype/totalterms);
-
-
         laplacesmoothing= (numtermspertype+1/totalterms+ v);
-
-
-
-
-
-
-
-
     }
 
     public void custom() throws IOException {
@@ -238,20 +222,22 @@ public class LuceneSearcher {
 
     }
 
-    public SimilarityBase bigramWithLaplaceSimilarity() {
+    public SimilarityBase createBigramLaplaceSimilarity() {
         return new SimilarityBase() {
             @Override
             protected float score(BasicStats basicStats, float freq, float docLen) {
 
-                // Where are the tokens going to be passed?
+                // How do we pass this function the tokens?
+                ArrayList<String> tokens = ?
 
                 float totalWords = 0;
                 float score = 0;
-                HashMap<String, Integer> biwords = new HashMap<>();
+                HashMap<String, Double> biwords = new HashMap<>();
 
                 for (int i = 0; i < docLen; i += 2) {
                     String biword = tokens[i] + tokens[i + 1];
-                    biwords.put(biword, 0);
+                    // Does setting everything to one initially account for Laplace?
+                    biwords.put(biword, 1.0);
                     totalWords += 2;
                 }
 
@@ -259,23 +245,27 @@ public class LuceneSearcher {
                 // Iterate over the document
                 for (int i = 0; i < docLen; i += 2) {
 
-                    // Score every bigram
+                    // Score every biword
                     String biword = doc[i] + doc[i + 1];
 
                     if (biwords.containsKey(biword)) {
-                        int curCount = biwords.get(biword);
+                        double curCount = biwords.get(biword);
                         curCount++;
                         biwords.put(biword, curCount);
+                    }
+                    else {
+                        biwords.put(biword, 1.0);
                     }
                 }
 
                 // Get the probability of each biword
-
-                // Smooth with laplace
-
+                double prob = 0;
+                for (String biword : biwords.keySet()) {
+                    prob /= biwords.get(biword) / totalWords;
+                    biwords.put(biword, prob);
+                }
 
                 return score;
-
             }
 
             @Override
@@ -285,10 +275,6 @@ public class LuceneSearcher {
     }
 
 /* Creating Unigram Language Model with Laplace Smoothing with alpha=1 */
-
-
-
-
 
 
     public static void main (String [] args) throws IOException {
