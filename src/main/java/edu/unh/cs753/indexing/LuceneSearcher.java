@@ -9,6 +9,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.similarities.BasicStats;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.search.similarities.SimilarityBase;
 import utils.KotlinSearchUtils;
 
@@ -17,6 +18,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class LuceneSearcher {
@@ -198,6 +200,53 @@ public class LuceneSearcher {
         };
 
     }
+
+    public SimilarityBase bigramWithLaplaceSimilarity() {
+        return new SimilarityBase() {
+            @Override
+            protected float score(BasicStats basicStats, float freq, float docLen) {
+
+                // Where are the tokens going to be passed?
+
+                float totalWords = 0;
+                float score = 0;
+                HashMap<String, Integer> biwords = new HashMap<>();
+
+                for (int i = 0; i < docLen; i += 2) {
+                    String biword = tokens[i] + tokens[i + 1];
+                    biwords.put(biword, 0);
+                    totalWords += 2;
+                }
+
+                // Use the biwords map to score
+                // Iterate over the document
+                for (int i = 0; i < docLen; i += 2) {
+
+                    // Score every bigram
+                    String biword = doc[i] + doc[i + 1];
+
+                    if (biwords.containsKey(biword)) {
+                        int curCount = biwords.get(biword);
+                        curCount++;
+                        biwords.put(biword, curCount);
+                    }
+                }
+
+                // Get the probability of each biword
+
+                // Smooth with laplace
+
+
+                return score;
+
+            }
+
+            @Override
+            public String toString() {return null;}
+        };
+
+    }
+
 
     public static void main (String [] args) throws IOException {
         LuceneSearcher searcher1 = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
