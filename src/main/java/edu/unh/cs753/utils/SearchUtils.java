@@ -2,6 +2,7 @@ package edu.unh.cs753.utils;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.index.DirectoryReader;
@@ -52,7 +53,7 @@ public class SearchUtils {
      */
     public static Query createStandardBooleanQuery(String queryString, String termField) {
         BooleanQuery.Builder builder = new BooleanQuery.Builder();
-        ArrayList<String> tokens = createTokenList(queryString, new StandardAnalyzer());
+        ArrayList<String> tokens = createTokenList(queryString, new EnglishAnalyzer());
 
         for (String token : tokens) {
             Term term = new Term(termField, token);

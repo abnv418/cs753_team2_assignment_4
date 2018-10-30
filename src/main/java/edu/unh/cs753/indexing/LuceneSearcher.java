@@ -48,6 +48,15 @@ public class LuceneSearcher {
         return null;
     }
 
+    public TopDocs queryBigrams(String queryString, Integer nResults) {
+        Query q = SearchUtils.createStandardBooleanQuery(queryString, "bigram");
+        try {
+            return searcher.search(q, nResults);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public ArrayList<idScore> doSearch(String query) throws IOException {
         TopDocs topDocs = query(query, 100);
@@ -283,8 +292,6 @@ public class LuceneSearcher {
     }
 
 /* Creating Unigram Language Model with Laplace Smoothing with alpha=1 */
-
-
     public void createlaplaceSmoothing(){
 
         SimilarityBase similarity = new SimilarityBase() {
