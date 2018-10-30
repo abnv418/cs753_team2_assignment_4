@@ -57,7 +57,9 @@ public class LuceneSearcher {
      * @return TopDocs (ranked results matching query)
      */
     public TopDocs queryBigrams(String queryString, Integer nResults) {
-        Query q = SearchUtils.createStandardBooleanQuery(queryString, "bigram");
+        Query q = SearchUtils.createStandardBooleanQuerywithBigrams(queryString, "bigram");
+        System.out.println("QueryString: " + queryString);
+        System.out.println("q: " + q);
         try {
             return searcher.search(q, nResults);
         } catch (IOException e) {
@@ -71,11 +73,22 @@ public class LuceneSearcher {
         return parseTopDocs(topDocs);
     }
 
+    public ArrayList<idScore> doBigramsSearch(String query) throws IOException {
+        TopDocs topDocs = queryBigrams(query, 100);
+        return parseTopDocs(topDocs);
+    }
+
     // Overloaded version that takes a Query instead
     public ArrayList<idScore> doSearch(Query q) throws IOException {
         TopDocs topDocs = searcher.search(q, 100);
         return parseTopDocs(topDocs);
     }
+
+    public ArrayList<idScore> doBigramsSearch(Query q) throws IOException {
+        TopDocs topDocs = searcher.search(q, 100);
+        return parseTopDocs(topDocs);
+    }
+
 
     private ArrayList<idScore> parseTopDocs(TopDocs topDocs) throws IOException {
         ArrayList<idScore> al = new ArrayList<>();
@@ -91,6 +104,7 @@ public class LuceneSearcher {
     }
 
 
+
     // Custom class for storing the retrieved data
     public class idScore {
         public String i;
@@ -102,42 +116,6 @@ public class LuceneSearcher {
         }
     }
 
-
-//
-//    public void laplacesmoothing(){
-//
-//
-//        float probability;
-//        float numtermspertype=0;
-//        float totalterms=0;
-//        float laplacesmoothing;
-//        float v=0;
-//        /* V is the distinct type of terms*/
-//
-//        /* For calculating the total number of terms*/
-//
-//        for(Data.Page u:pages){
-//
-//            totalterms+=totalterms;
-//
-//        }
-//
-//
-//
-//
-//        probability= (numtermspertype/totalterms);
-//
-//
-//        laplacesmoothing= (numtermspertype+1/totalterms+ v);
-//
-//
-//
-//
-//
-//
-//
-//
-//    }
 
     public void custom() throws IOException {
         //System.out.println("This is custom Scoring function");
@@ -197,6 +175,27 @@ public class LuceneSearcher {
             int counter = 1;
             for (idScore item : idSc) {
                 out.write(pageId + " Q0 " + item.i + " " + counter + " " + item.s + " team2-standard\n");
+                counter++;
+            }
+        }
+        out.close();
+    }
+
+    public void laplacebigramrun() throws IOException
+    {
+        createlaplaceSmoothing();
+        FileWriter fstream = new FileWriter("bigram_run.run", false);
+        BufferedWriter out = new BufferedWriter(fstream);
+
+        for (Data.Page page : pages) {
+
+            String pageId = page.getPageId();
+            String query = page.getPageName();
+            ArrayList<idScore> idSc = doBigramsSearch(query);
+            System.out.println(idSc);
+            int counter = 1;
+            for (idScore item : idSc) {
+                out.write(pageId + " Q0 " + item.i + " " + counter + " " + item.s + " team2-english\n");
                 counter++;
             }
         }
@@ -365,7 +364,14 @@ public class LuceneSearcher {
         searcher.setSimilarity(similarity);
     }
 
+    // If we have a longer document there are naturally better probability estimates.
+    // so we want to give more weight to the prob estimates.
+    // Set lambda as a function of document length. N=doc length
+    // Weight = N/N-mew = lambda
+    // mew/N+mew = 1 - lambda
+    public void createdirilicht(){
 
+<<<<<<< HEAD
 //    public void dirichlet(){
 //
 //        //when new similarity base is called then there is an error I think this is due to the float mu.
@@ -404,18 +410,44 @@ public class LuceneSearcher {
 
     // This is used for creating the run file for Jerelick Mercer.
      // searcher2.jm();
+=======
+        SimilarityBase similarity = new SimilarityBase() {
+            @Override
+            protected float score(BasicStats basicStats, float freq, float docLen) {
 
 
+                float  corpus= (freq)/(docLen);
+
+                float jelenik= (float) ((corpus*0.1) + (freq*0.9));
+>>>>>>> Had to modify the StandardBooleanQuery method to deal with bigrams.
+
+                return (float) Math.log(jelenik);
+
+            }
+
+            @Override
+            public String toString() {
+                return null;
+            }
+        };
+
+        searcher.setSimilarity(similarity);
+    }
 
 
+    public static void main (String [] args) throws IOException {
+        LuceneSearcher searcher1 = new LuceneSearcher("/home/rachel/ir/P4/cs753_team2_assignment_4/bigramparagraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
+        searcher1.laplacebigramrun();
 
-    //    LuceneSearcher custom = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
-//        custom.custom();
-//        custom.customRun();
+        //LuceneSearcher searcher2=new LuceneSearcher("/Users/abnv/Desktop/indexer2/paragraphs","/Users/abnv/Desktop/train.pages.cbor-outlines.cbor");
 
-
-       // LuceneIndexer indexer1= new LuceneIndexer("paragraphs");
-
-       // indexer1.doIndex("/Users/abnv/Desktop/Indexer/train.pages.cbor-paragraphs.cbor");
+        /*searcher2.createlaplaceSmoothing();
+        searcher2.laplacerun();
+        searcher2.jm();
+        LuceneSearcher custom = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
+        custom.custom();
+        custom.customRun();
+        LuceneIndexer indexer1= new LuceneIndexer("paragraphs");
+        indexer1.doIndex("/Users/abnv/Desktop/Indexer/train.pages.cbor-paragraphs.cbor");*/
     }
 }

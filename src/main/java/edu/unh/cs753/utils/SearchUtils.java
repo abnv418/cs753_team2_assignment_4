@@ -64,6 +64,20 @@ public class SearchUtils {
         return builder.build();
     }
 
+    public static Query createStandardBooleanQuerywithBigrams(String queryString, String termField) {
+        BooleanQuery.Builder builder = new BooleanQuery.Builder();
+        ArrayList<String> tokens = createTokenList(queryString, new EnglishAnalyzer());
+
+        for (int i = 0; i < tokens.size() - 1; i++) {
+            Term term = new Term(termField, tokens.get(i) + tokens.get(i+1));
+            TermQuery termQuery = new TermQuery(term);
+
+            builder.add(termQuery, BooleanClause.Occur.SHOULD);
+        }
+
+        return builder.build();
+    }
+
     /**
      * Function: createTokenList
      * Desc: Given a query string, chops it up into tokens and returns an array list of tokens.
