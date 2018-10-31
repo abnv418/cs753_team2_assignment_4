@@ -203,9 +203,9 @@ public class LuceneSearcher {
     }
 
 
-    public void dirichletrun() throws IOException
+    public void dirilichtrun() throws IOException
     {
-        createdirichlet();
+        createdirilicht();
         FileWriter fstream = new FileWriter("dr_run.run", false);
         BufferedWriter out = new BufferedWriter(fstream);
 
@@ -370,7 +370,6 @@ public class LuceneSearcher {
     /*
      * Longer documents naturally have better probability estimates. Hence we want to give more weight to those
      * probability estimates.
-     * mu > 0 and on the same scale as documnet length. Set mu to average document length in collection.
      *
      */
     public void createdirilicht(){
@@ -380,7 +379,7 @@ public class LuceneSearcher {
             protected float score(BasicStats basicStats, float freq, float docLen) {
 
                 // Add mu items from collection
-                //float mu = average length of documents in the collection;
+                float mu = 1000;
                 float dr = 0;
                 dr = (freq + mu * basicStats.getNumberOfDocuments()) / (docLen + mu);
                 return dr;
@@ -394,8 +393,8 @@ public class LuceneSearcher {
 
 
     public static void main (String [] args) throws IOException {
-        LuceneSearcher searcher1 = new LuceneSearcher("/home/rachel/ir/P4/cs753_team2_assignment_4/bigramparagraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
-        searcher1.laplacebigramrun();
+        LuceneSearcher searcher1 = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
+        searcher1.dirilichtrun();
 
         //LuceneSearcher searcher2=new LuceneSearcher("/Users/abnv/Desktop/indexer2/paragraphs","/Users/abnv/Desktop/train.pages.cbor-outlines.cbor");
 
