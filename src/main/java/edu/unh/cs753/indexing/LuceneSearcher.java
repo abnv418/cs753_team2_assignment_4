@@ -86,41 +86,53 @@ public class LuceneSearcher {
     }
 
 
+    public void customlaplaceRun() throws IOException {
+        createlaplaceSmoothing();
+        FileWriter fstream = new FileWriter("custom_laplace.run", false);
+        BufferedWriter out = new BufferedWriter(fstream);
 
-    public void laplacesmoothing(){
+        for (Data.Page page : pages) {
 
+            // Id of the page, which is needed when you print out the run file
+            String pageId = page.getPageId();
 
-        float probability;
-        float numtermspertype=0;
-        float totalterms=0;
-        float laplacesmoothing;
-        float v=0;
-        /* V is the distinct type of terms*/
-
-        /* For calculating the total number of terms*/
-
-        for(Data.Page u:pages){
-
-            totalterms+=totalterms;
-
+            // This query is the name of the page
+            String query = page.getPageName();
+            ArrayList<idScore> idSc = doSearch(query);
+            int counter = 1;
+            for (idScore item : idSc) {
+                out.write(pageId + " Q0 " + item.i + " " + counter + " " + item.s + " team2-standard\n");
+                counter++;
+            }
         }
-
-
-
-
-        probability= (numtermspertype/totalterms);
-
-
-        laplacesmoothing= (numtermspertype+1/totalterms+ v);
-
-
-
-
-
-
-
-
+        out.close();
     }
+
+//    public void laplacesmoothing(){
+//
+//
+//        float probability;
+//        float numtermspertype=0;
+//        float totalterms;
+//        float laplacesmoothing;
+//        float v=0;
+//        /* V is the distinct type of terms*/
+//
+//        /* For calculating the total number of terms*/
+//
+//        for(Data.Page u:pages){
+//
+//            totalterms+=totalterms;
+//
+//        }
+//
+//
+//        probability= (numtermspertype/totalterms);
+//
+//        laplacesmoothing= (numtermspertype+1/totalterms+ v);
+//
+//
+//    }
 
     public void custom() throws IOException {
         //System.out.println("This is custom Scoring function");
@@ -140,6 +152,8 @@ public class LuceneSearcher {
         searcher.setSimilarity(mysimilarity);
 
     }
+
+
 
     /**
      * Function: queryWithCustomScore
@@ -199,6 +213,59 @@ public class LuceneSearcher {
         };
 
     }
+// This is a templare for Laplace smoothing. doc length : - unique terms (v), v= doc length , freq: - One partcular term.
+
+    // basicstats. -- command
+
+
+
+    public void createlaplaceSmoothing(){
+
+        SimilarityBase similarity = new SimilarityBase() {
+            @Override
+            protected float score(BasicStats basicStats, float freq, float docLen) {
+
+                float laplace= (freq+ 1)/ (2* docLen);
+
+                return (float) Math.log(laplace);
+
+            }
+
+            @Override
+            public String toString() {
+                return null;
+            }
+        };
+
+        searcher.setSimilarity(similarity);
+    }
+
+
+    public void createjelinekmercer(){
+
+        SimilarityBase similarity = new SimilarityBase() {
+            @Override
+            protected float score(BasicStats basicStats, float freq, float docLen) {
+
+
+                float  corpus= (freq)/(docLen);
+
+                float jelenik= (float) ((corpus*0.1) + (freq*0.9));
+
+                return (float) Math.log(jelenik);
+
+            }
+
+            @Override
+            public String toString() {
+                return null;
+            }
+        };
+
+        searcher.setSimilarity(similarity);
+    }
+
+
 
     public SimilarityBase createLncSimilarity() {
         return new SimilarityBase() {
@@ -241,14 +308,12 @@ public class LuceneSearcher {
 
 
 
-
-
-
     public static void main (String [] args) throws IOException {
-        LuceneSearcher searcher1 = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
+        //LuceneSearcher searcher1 = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
 //        searcher1.run();
 
         LuceneSearcher custom = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
+        custom.customlaplaceRun();
 //        custom.custom();
 //        custom.customRun();
     }
