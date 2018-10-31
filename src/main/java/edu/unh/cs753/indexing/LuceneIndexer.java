@@ -38,7 +38,7 @@ public class LuceneIndexer {
             // Concatenate them together and store as field.
             if (tokens1.size() != 0) {
                 List<String> tokens2 = getBigram(tokens1);
-                String bigram = String.join(" " + tokens2);
+                String bigram = String.join(" " , tokens2);
                 doc.add(new TextField("bigram", bigram, Field.Store.YES));
             }
 
@@ -58,18 +58,18 @@ public class LuceneIndexer {
 
         // Make a list of bigram Strings
         ArrayList<String> bigrams = new ArrayList<>();
-        for (int i = 1; i < tokens.size() - 1; i++) {
+        for (int i = 0; i < tokens.size() - 1; i++) {
             String bigram = tokens.get(i) + tokens.get(i + 1);
             bigrams.add(bigram);
         }
         return bigrams;
     }
 
-    /*public static void main (String [] args) throws IOException {
+    public static void main (String [] args) throws IOException {
         String path = "/home/rachel/ir/test200/test200-train/train.pages.cbor-paragraphs.cbor";
         LuceneIndexer indexer  = new LuceneIndexer("bigramParagraphs"); // The directory that will be made
         indexer.doIndex(path);
-    }*/
+    }
 
 
 }
