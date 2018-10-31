@@ -86,41 +86,41 @@ public class LuceneSearcher {
     }
 
 
-
-    public void laplacesmoothing(){
-
-
-        float probability;
-        float numtermspertype=0;
-        float totalterms=0;
-        float laplacesmoothing;
-        float v=0;
-        /* V is the distinct type of terms*/
-
-        /* For calculating the total number of terms*/
-
-        for(Data.Page u:pages){
-
-            totalterms+=totalterms;
-
-        }
-
-
-
-
-        probability= (numtermspertype/totalterms);
-
-
-        laplacesmoothing= (numtermspertype+1/totalterms+ v);
-
-
-
-
-
-
-
-
-    }
+//
+//    public void laplacesmoothing(){
+//
+//
+//        float probability;
+//        float numtermspertype=0;
+//        float totalterms=0;
+//        float laplacesmoothing;
+//        float v=0;
+//        /* V is the distinct type of terms*/
+//
+//        /* For calculating the total number of terms*/
+//
+//        for(Data.Page u:pages){
+//
+//            totalterms+=totalterms;
+//
+//        }
+//
+//
+//
+//
+//        probability= (numtermspertype/totalterms);
+//
+//
+//        laplacesmoothing= (numtermspertype+1/totalterms+ v);
+//
+//
+//
+//
+//
+//
+//
+//
+//    }
 
     public void custom() throws IOException {
         //System.out.println("This is custom Scoring function");
