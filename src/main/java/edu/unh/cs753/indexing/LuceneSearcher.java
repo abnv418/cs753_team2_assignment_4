@@ -203,28 +203,28 @@ public class LuceneSearcher {
     }
 
 
-//    public void dirichletrun() throws IOException
-//    {
-//        dirichlet();
-//        FileWriter fstream = new FileWriter("dr_run.run", false);
-//        BufferedWriter out = new BufferedWriter(fstream);
-//
-//        for (Data.Page page : pages) {
-//
-//            // Id of the page, which is needed when you print out the run file
-//            String pageId = page.getPageId();
-//
-//            // This query is the name of the page
-//            String query = page.getPageName();
-//            ArrayList<idScore> idSc = doSearch(query);
-//            int counter = 1;
-//            for (idScore item : idSc) {
-//                out.write(pageId + " Q0 " + item.i + " " + counter + " " + item.s + " team2-standard\n");
-//                counter++;
-//            }
-//        }
-//        out.close();
-//    }
+    public void dirichletrun() throws IOException
+    {
+        createdirichlet();
+        FileWriter fstream = new FileWriter("dr_run.run", false);
+        BufferedWriter out = new BufferedWriter(fstream);
+
+        for (Data.Page page : pages) {
+
+            // Id of the page, which is needed when you print out the run file
+            String pageId = page.getPageId();
+
+            // This query is the name of the page
+            String query = page.getPageName();
+            ArrayList<idScore> idSc = doSearch(query);
+            int counter = 1;
+            for (idScore item : idSc) {
+                out.write(pageId + " Q0 " + item.i + " " + counter + " " + item.s + " team2-standard\n");
+                counter++;
+            }
+        }
+        out.close();
+    }
 
 
 
@@ -323,7 +323,10 @@ public class LuceneSearcher {
 
     }
 
-/* Creating Unigram Language Model with Laplace Smoothing with alpha=1 */
+    /*
+     * Create Unigram Language Model with Laplace Smoothing where alpha = 1
+     *
+     */
     public void createlaplaceSmoothing(){
 
         SimilarityBase similarity = new SimilarityBase() {
@@ -364,75 +367,30 @@ public class LuceneSearcher {
         searcher.setSimilarity(similarity);
     }
 
-    // If we have a longer document there are naturally better probability estimates.
-    // so we want to give more weight to the prob estimates.
-    // Set lambda as a function of document length. N=doc length
-    // Weight = N/N-mew = lambda
-    // mew/N+mew = 1 - lambda
+    /*
+     * Longer documents naturally have better probability estimates. Hence we want to give more weight to those
+     * probability estimates.
+     * mu > 0 and on the same scale as documnet length. Set mu to average document length in collection.
+     *
+     */
     public void createdirilicht(){
 
-<<<<<<< HEAD
-//    public void dirichlet(){
-//
-//        //when new similarity base is called then there is an error I think this is due to the float mu.
-//
-//        SimilarityBase similarity= new SimilarityBase() {
-//            @Override
-//            protected float score(BasicStats basicStats, float freq, float docLen,float mu) {
-//
-//                float dr=0;
-//
-//                dr=(freq+mu*basicStats.getNumberOfDocuments())/(docLen+mu);
-//
-//                return dr;
-//            }
-//            @Override
-//            public String toString() { return null; }
-//        };
-//        searcher.setSimilarity(similarity);
-//
-//    }
-
-
-
-    public static void main (String [] args) throws IOException {
-    //    LuceneSearcher searcher1 = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
-//        searcher1.run();
-
-       LuceneSearcher searcher2=new LuceneSearcher("/Users/abnv/Desktop/indexer2/paragraphs","/Users/abnv/Desktop/train.pages.cbor-outlines.cbor");
-
-
-       // searcher2.createlaplaceSmoothing();
-
-
-      // This is used for creating the run file for laplace.
-       // searcher2.laplacerun();
-
-    // This is used for creating the run file for Jerelick Mercer.
-     // searcher2.jm();
-=======
-        SimilarityBase similarity = new SimilarityBase() {
+        SimilarityBase similarity= new SimilarityBase() {
             @Override
             protected float score(BasicStats basicStats, float freq, float docLen) {
 
-
-                float  corpus= (freq)/(docLen);
-
-                float jelenik= (float) ((corpus*0.1) + (freq*0.9));
->>>>>>> Had to modify the StandardBooleanQuery method to deal with bigrams.
-
-                return (float) Math.log(jelenik);
-
+                // Add mu items from collection
+                //float mu = average length of documents in the collection;
+                float dr = 0;
+                dr = (freq + mu * basicStats.getNumberOfDocuments()) / (docLen + mu);
+                return dr;
             }
-
             @Override
-            public String toString() {
-                return null;
-            }
+            public String toString() { return null; }
         };
 
-        searcher.setSimilarity(similarity);
     }
+
 
 
     public static void main (String [] args) throws IOException {
