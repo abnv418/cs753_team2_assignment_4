@@ -141,6 +141,52 @@ public class LuceneSearcher {
 
     }
 
+    public void jm() throws IOException {
+        custom();
+        FileWriter fstream = new FileWriter("jm.run", false);
+        BufferedWriter out = new BufferedWriter(fstream);
+
+        for (Data.Page page : pages) {
+
+            // Id of the page, which is needed when you print out the run file
+            String pageId = page.getPageId();
+
+            // This query is the name of the page
+            String query = page.getPageName();
+            ArrayList<idScore> idSc = doSearch(query);
+            int counter = 1;
+            for (idScore item : idSc) {
+                out.write(pageId + " Q0 " + item.i + " " + counter + " " + item.s + " team2-standard\n");
+                counter++;
+            }
+        }
+        out.close();
+    }
+
+    public void laplacerun() throws IOException {
+        custom();
+        FileWriter fstream = new FileWriter("jm.run", false);
+        BufferedWriter out = new BufferedWriter(fstream);
+
+        for (Data.Page page : pages) {
+
+            // Id of the page, which is needed when you print out the run file
+            String pageId = page.getPageId();
+
+            // This query is the name of the page
+            String query = page.getPageName();
+            ArrayList<idScore> idSc = doSearch(query);
+            int counter = 1;
+            for (idScore item : idSc) {
+                out.write(pageId + " Q0 " + item.i + " " + counter + " " + item.s + " team2-standard\n");
+                counter++;
+            }
+        }
+        out.close();
+    }
+
+
+
     /**
      * Function: queryWithCustomScore
      * Desc: Queries Lucene paragraph corpus using a custom similarity function.
@@ -289,11 +335,28 @@ public class LuceneSearcher {
 
 
     public static void main (String [] args) throws IOException {
-        LuceneSearcher searcher1 = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
+    //    LuceneSearcher searcher1 = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
 //        searcher1.run();
 
-        LuceneSearcher custom = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
+       LuceneSearcher searcher2=new LuceneSearcher("/Users/abnv/Desktop/indexer2/paragraphs","/Users/abnv/Desktop/train.pages.cbor-outlines.cbor");
+//        searcher2.createlaplaceSmoothing();
+
+        searcher2.laplacerun();
+
+
+       // searcher2.jm();
+
+
+
+
+
+    //    LuceneSearcher custom = new LuceneSearcher("/home/rachel/ir/P1/paragraphs", "/home/rachel/ir/test200/test200-train/train.pages.cbor-outlines.cbor");
 //        custom.custom();
 //        custom.customRun();
+
+
+       // LuceneIndexer indexer1= new LuceneIndexer("paragraphs");
+
+       // indexer1.doIndex("/Users/abnv/Desktop/Indexer/train.pages.cbor-paragraphs.cbor");
     }
 }
