@@ -239,7 +239,51 @@ public class LuceneSearcher {
 /* Creating Unigram Language Model with Laplace Smoothing with alpha=1 */
 
 
+    public void createlaplaceSmoothing(){
 
+        SimilarityBase similarity = new SimilarityBase() {
+            @Override
+            protected float score(BasicStats basicStats, float freq, float docLen) {
+
+                float laplace= (freq+ 1)/ (2* docLen);
+
+                return (float) Math.log(laplace);
+
+            }
+
+            @Override
+            public String toString() {
+                return null;
+            }
+        };
+
+        searcher.setSimilarity(similarity);
+    }
+
+
+    public void createjelinekmercer(){
+
+        SimilarityBase similarity = new SimilarityBase() {
+            @Override
+            protected float score(BasicStats basicStats, float freq, float docLen) {
+
+
+                float  corpus= (freq)/(docLen);
+
+                float jelenik= (float) ((corpus*0.1) + (freq*0.9));
+
+                return (float) Math.log(jelenik);
+
+            }
+
+            @Override
+            public String toString() {
+                return null;
+            }
+        };
+
+        searcher.setSimilarity(similarity);
+    }
 
 
 
