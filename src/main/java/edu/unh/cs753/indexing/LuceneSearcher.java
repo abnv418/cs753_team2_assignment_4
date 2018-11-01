@@ -48,6 +48,14 @@ public class LuceneSearcher {
         return null;
     }
 
+    /**
+     * Function: queryBigrams
+     * Desc: Queries Lucene paragraph corpus using bigrams and a standard similarity function.
+     *       Note that this uses the EnglishAnalyzer.
+     * @param queryString: The query string that will be turned into a boolean query.
+     * @param nResults: How many search results should be returned
+     * @return TopDocs (ranked results matching query)
+     */
     public TopDocs queryBigrams(String queryString, Integer nResults) {
         Query q = SearchUtils.createStandardBooleanQuery(queryString, "bigram");
         try {

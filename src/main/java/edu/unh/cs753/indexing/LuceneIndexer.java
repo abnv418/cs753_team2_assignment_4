@@ -27,16 +27,20 @@ public class LuceneIndexer {
             Document doc = new Document();
             doc.add(new StringField("id", p.getParaId(), Field.Store.YES));
 
+            // Get the tokens using the English analyzer
             List<String> tokens1 = SearchUtils.createTokenList(p.getTextOnly(), new EnglishAnalyzer());
             String unigram = String.join(" " + tokens1);
 
             // Concatenate tokens together to get "text" field
             doc.add(new TextField("text", unigram, Field.Store.YES));
 
-            //Run bigram method on tokens, get back bigram tokens, concatenate them together and store as field
-            List<String> tokens2 = getBigram(tokens1);
-            String bigram = String.join(" " + tokens2);
-            doc.add(new TextField("bigram", bigram, Field.Store.YES));
+            // Run bigram method on tokens just obtained and get back bigram tokens.
+            // Concatenate them together and store as field.
+            if (tokens1.size() != 0) {
+                List<String> tokens2 = getBigram(tokens1);
+                String bigram = String.join(" " + tokens2);
+                doc.add(new TextField("bigram", bigram, Field.Store.YES));
+            }
 
             writer.addDocument(doc);
             counter++;
@@ -50,17 +54,22 @@ public class LuceneIndexer {
         writer.close();
     }
 
-    public List<String> getBigram(List<String> tokens) throws IOException {
+    public ArrayList<String> getBigram(List<String> tokens) throws IOException {
 
         // Make a list of bigram Strings
-        List<String> bigrams = null;
-
-        for (int i = 0; i < tokens.size(); i++) {
+        ArrayList<String> bigrams = new ArrayList<>();
+        for (int i = 1; i < tokens.size() - 1; i++) {
             String bigram = tokens.get(i) + tokens.get(i + 1);
             bigrams.add(bigram);
         }
-
         return bigrams;
     }
+
+    /*public static void main (String [] args) throws IOException {
+        String path = "/home/rachel/ir/test200/test200-train/train.pages.cbor-paragraphs.cbor";
+        LuceneIndexer indexer  = new LuceneIndexer("bigramParagraphs"); // The directory that will be made
+        indexer.doIndex(path);
+    }*/
+
 
 }
