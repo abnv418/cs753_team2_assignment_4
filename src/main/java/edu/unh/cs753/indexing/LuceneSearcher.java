@@ -196,6 +196,30 @@ public class LuceneSearcher {
     }
 
 
+    public void dirichletrun() throws IOException
+    {
+        dirichlet();
+        FileWriter fstream = new FileWriter("dr_run.run", false);
+        BufferedWriter out = new BufferedWriter(fstream);
+
+        for (Data.Page page : pages) {
+
+            // Id of the page, which is needed when you print out the run file
+            String pageId = page.getPageId();
+
+            // This query is the name of the page
+            String query = page.getPageName();
+            ArrayList<idScore> idSc = doSearch(query);
+            int counter = 1;
+            for (idScore item : idSc) {
+                out.write(pageId + " Q0 " + item.i + " " + counter + " " + item.s + " team2-standard\n");
+                counter++;
+            }
+        }
+        out.close();
+    }
+
+
 
     /**
      * Function: queryWithCustomScore
@@ -321,24 +345,39 @@ public class LuceneSearcher {
             @Override
             protected float score(BasicStats basicStats, float freq, float docLen) {
 
-
                 float  corpus= (freq)/(docLen);
-
                 float jelenik= (float) ((corpus*0.1) + (freq*0.9));
-
                 return (float) Math.log(jelenik);
-
             }
-
             @Override
             public String toString() {
                 return null;
             }
         };
-
         searcher.setSimilarity(similarity);
     }
 
+
+    public void dirichlet(){
+
+        //when new similarity base is called then there is an error I think this is due to the float mu.
+
+        SimilarityBase similarity= new SimilarityBase() {
+            @Override
+            protected float score(BasicStats basicStats, float freq, float docLen,float mu) {
+
+                float dr=0;
+
+                dr=(freq+mu*basicStats.getNumberOfDocuments())/(docLen+mu);
+
+                return dr;
+            }
+            @Override
+            public String toString() { return null; }
+        };
+        searcher.setSimilarity(similarity);
+
+    }
 
 
 
@@ -351,9 +390,11 @@ public class LuceneSearcher {
 
        // searcher2.createlaplaceSmoothing();
 
-        searcher2.laplacerun();
 
+      // This is used for creating the run file for laplace.
+       // searcher2.laplacerun();
 
+    // This is used for creating the run file for Jerelick Mercer.
      // searcher2.jm();
 
 
