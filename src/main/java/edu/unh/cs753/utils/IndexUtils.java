@@ -66,7 +66,7 @@ public class IndexUtils {
         Path indexPath = Paths.get(indexLoc);
         try {
             FSDirectory indexDir = FSDirectory.open(indexPath);
-            IndexWriterConfig conf = new IndexWriterConfig(new EnglishAnalyzer());
+            IndexWriterConfig conf = new IndexWriterConfig(new StandardAnalyzer());
             conf.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
             return new IndexWriter(indexDir, conf);
         } catch (IOException e) {

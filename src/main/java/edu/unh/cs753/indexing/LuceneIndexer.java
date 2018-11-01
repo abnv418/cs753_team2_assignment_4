@@ -2,6 +2,8 @@ package edu.unh.cs753.indexing;
 
 import edu.unh.cs.treccar_v2.Data;
 import edu.unh.cs753.utils.IndexUtils;
+import edu.unh.cs753.utils.SearchUtils;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -9,6 +11,8 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LuceneIndexer {
     private final IndexWriter writer;
@@ -22,7 +26,18 @@ public class LuceneIndexer {
         for (Data.Paragraph p : IndexUtils.createParagraphIterator(cborLoc)) {
             Document doc = new Document();
             doc.add(new StringField("id", p.getParaId(), Field.Store.YES));
-            doc.add(new TextField("text", p.getTextOnly(), Field.Store.YES));
+
+            List<String> tokens1 = SearchUtils.createTokenList(p.getTextOnly(), new EnglishAnalyzer());
+            String unigram = String.join(" " + tokens1);
+
+            // Concatenate tokens together to get "text" field
+            doc.add(new TextField("text", unigram, Field.Store.YES));
+
+            //Run bigram method on tokens, get back bigram tokens, concatenate them together and store as field
+            List<String> tokens2 = getBigram(tokens1);
+            String bigram = String.join(" " + tokens2);
+            doc.add(new TextField("bigram", bigram, Field.Store.YES));
+
             writer.addDocument(doc);
             counter++;
             if (counter % 50 == 0) {
@@ -35,6 +50,17 @@ public class LuceneIndexer {
         writer.close();
     }
 
+    public List<String> getBigram(List<String> tokens) throws IOException {
 
+        // Make a list of bigram Strings
+        List<String> bigrams = null;
+
+        for (int i = 0; i < tokens.size(); i++) {
+            String bigram = tokens.get(i) + tokens.get(i + 1);
+            bigrams.add(bigram);
+        }
+
+        return bigrams;
+    }
 
 }
