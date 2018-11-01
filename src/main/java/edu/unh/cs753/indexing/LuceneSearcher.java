@@ -142,7 +142,7 @@ public class LuceneSearcher {
     }
 
     public void jm() throws IOException {
-        custom();
+        createjelinekmercer();
         FileWriter fstream = new FileWriter("jm.run", false);
         BufferedWriter out = new BufferedWriter(fstream);
 
@@ -163,9 +163,10 @@ public class LuceneSearcher {
         out.close();
     }
 
-    public void laplacerun() throws IOException {
-        custom();
-        FileWriter fstream = new FileWriter("jm.run", false);
+    public void laplacerun() throws IOException
+    {
+        createlaplaceSmoothing();
+        FileWriter fstream = new FileWriter("laplace_run.run", false);
         BufferedWriter out = new BufferedWriter(fstream);
 
         for (Data.Page page : pages) {
@@ -339,12 +340,14 @@ public class LuceneSearcher {
 //        searcher1.run();
 
        LuceneSearcher searcher2=new LuceneSearcher("/Users/abnv/Desktop/indexer2/paragraphs","/Users/abnv/Desktop/train.pages.cbor-outlines.cbor");
-//        searcher2.createlaplaceSmoothing();
+
+
+       // searcher2.createlaplaceSmoothing();
 
         searcher2.laplacerun();
 
 
-       // searcher2.jm();
+     // searcher2.jm();
 
 
 
