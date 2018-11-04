@@ -44,13 +44,26 @@ public class Main {
 			LuceneIndexer indexer  = new LuceneIndexer("paragraphs"); // The directory that will be made
 			indexer.doIndex(path);
 		}
-		else if (option.equals("search")) {
+		else if (option.equals("searchLaplace")) {
 			String cborOutlineLoc = args[2];
-			KotlinSearchUtils.INSTANCE.runAssignment3Search(path, cborOutlineLoc);
+			LuceneSearcher searcher = new LuceneSearcher(path, cborOutlineLoc);
+			searcher.laplacerun();
+		} else if (option.equals("searchJM")) {
+			String cborOutlineLoc = args[2];
+			LuceneSearcher searcher = new LuceneSearcher(path, cborOutlineLoc);
+			searcher.jm();
+		} else if (option.equals("searchDirichlet")) {
+			String cborOutlineLoc = args[2];
+			LuceneSearcher searcher = new LuceneSearcher(path, cborOutlineLoc);
+			searcher.dirilichtrun();
+		} else if (option.equals("searchBigram")) {
+			String cborOutlineLoc = args[2];
+			LuceneSearcher searcher = new LuceneSearcher(path, cborOutlineLoc);
+			searcher.laplacebigramrun();
 		}
-        else if (option.equals("spearman")) {
-            KotlinEvaluationUtils.INSTANCE.getSpearmanResults(path);
-        }
+//        else if (option.equals("spearman")) {
+//            KotlinEvaluationUtils.INSTANCE.getSpearmanResults(path);
+//        }
 
 	}
 
