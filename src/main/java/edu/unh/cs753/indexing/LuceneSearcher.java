@@ -69,8 +69,9 @@ public class LuceneSearcher {
     }
 
     public ArrayList<idScore> doSearch(String query) throws IOException {
-        TopDocs topDocs = query(query, 100);
-        return parseTopDocs(topDocs);
+        Query q = SearchUtils.createStandardBooleanQuery(query, "text"); // Need to use EnglishAnalyze now.
+//        TopDocs topDocs = query(q, 100);
+        return doSearch(q);
     }
 
     public ArrayList<idScore> doBigramsSearch(String query) throws IOException {

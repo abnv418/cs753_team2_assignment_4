@@ -29,7 +29,7 @@ public class LuceneIndexer {
 
             // Get the tokens using the English analyzer
             List<String> tokens1 = SearchUtils.createTokenList(p.getTextOnly(), new EnglishAnalyzer());
-            String unigram = String.join(" " + tokens1);
+            String unigram = String.join(" ", tokens1);
 
             // Concatenate tokens together to get "text" field
             doc.add(new TextField("text", unigram, Field.Store.YES));
