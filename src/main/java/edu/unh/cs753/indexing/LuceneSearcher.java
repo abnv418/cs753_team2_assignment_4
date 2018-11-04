@@ -4,10 +4,8 @@ import edu.unh.cs.treccar_v2.Data;
 import edu.unh.cs753.utils.IndexUtils;
 import edu.unh.cs753.utils.SearchUtils;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.BasicStats;
 import org.apache.lucene.search.similarities.SimilarityBase;
 import utils.KotlinSearchUtils;
@@ -58,8 +56,6 @@ public class LuceneSearcher {
      */
     public TopDocs queryBigrams(String queryString, Integer nResults) {
         Query q = SearchUtils.createStandardBooleanQuerywithBigrams(queryString, "bigram");
-        System.out.println("QueryString: " + queryString);
-        System.out.println("q: " + q);
         try {
             return searcher.search(q, nResults);
         } catch (IOException e) {
@@ -69,13 +65,16 @@ public class LuceneSearcher {
     }
 
     public ArrayList<idScore> doSearch(String query) throws IOException {
-        Query q = SearchUtils.createStandardBooleanQuery(query, "text"); // Need to use EnglishAnalyze now.
+        Query q = SearchUtils.createStandardBooleanQuery(query, "unigram"); // Need to use EnglishAnalyze now.
 //        TopDocs topDocs = query(q, 100);
-        return doSearch(q);
+        ArrayList<idScore> results = doSearch(q);
+        if (query.contains("Brush")) { String parId = results.get(0).i; Integer docId = searcher.search(new TermQuery(new Term("id", parId)), 1) .scoreDocs[0].doc; System.out.println(searcher.doc(docId).get("text")); }
+        return results;
     }
 
     public ArrayList<idScore> doBigramsSearch(String query) throws IOException {
         TopDocs topDocs = queryBigrams(query, 100);
+        if (query.contains("Brush")) { Integer docId = topDocs.scoreDocs[0].doc; System.out.println(searcher.doc(docId).get("text")); }
         return parseTopDocs(topDocs);
     }
 
@@ -193,7 +192,6 @@ public class LuceneSearcher {
             String pageId = page.getPageId();
             String query = page.getPageName();
             ArrayList<idScore> idSc = doBigramsSearch(query);
-            System.out.println(idSc);
             int counter = 1;
             for (idScore item : idSc) {
                 out.write(pageId + " Q0 " + item.i + " " + counter + " " + item.s + " team2-english\n");

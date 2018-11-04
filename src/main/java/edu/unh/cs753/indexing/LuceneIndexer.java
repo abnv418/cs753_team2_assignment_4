@@ -32,7 +32,8 @@ public class LuceneIndexer {
             String unigram = String.join(" ", tokens1);
 
             // Concatenate tokens together to get "text" field
-            doc.add(new TextField("text", unigram, Field.Store.YES));
+            doc.add(new TextField("text", p.getTextOnly(), Field.Store.YES));
+            doc.add(new TextField("unigram", unigram, Field.Store.YES));
 
             // Run bigram method on tokens just obtained and get back bigram tokens.
             // Concatenate them together and store as field.
