@@ -37,5 +37,7 @@ java -jar target/team2_4-1.0-SNAPSHOT-jar-with-dependencies.jar SEARCH paragraph
 ```
 Where paragraphs/ is the index created by the index command (make sure you point to the correct path), OUTLINES is the cbor outlines file that is used in querying, and SEARCH is the name of the search variant to use (see below).
 
-
-### Laplace Search
+ * *searchLaplace*: Searches using the Laplace variant. Output: laplace_run.run
+ * *searchJM*: Searches using the Jelenik-Mercer variant. Output: jm.run
+ * *searchDirichlet*: Searches using the Dirichlet variant. Output: dr_run.run
+ * *searchBigram*: Searrches using the Bigram variant (and with Laplace smoothing). Output: bigram_run.run
