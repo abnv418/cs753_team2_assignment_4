@@ -21,6 +21,7 @@ public class LuceneSearcher {
     public final IndexSearcher searcher;
     public final List<Data.Page> pages;
 
+
     public LuceneSearcher(String indexLoc, String queryCborLoc) {
         searcher = SearchUtils.createIndexSearcher(indexLoc);
 

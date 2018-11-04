@@ -27,6 +27,7 @@ public class LuceneIndexer {
             Document doc = new Document();
             doc.add(new StringField("id", p.getParaId(), Field.Store.YES));
 
+
             // Get the tokens using the English analyzer
             List<String> tokens1 = SearchUtils.createTokenList(p.getTextOnly(), new EnglishAnalyzer());
             String unigram = String.join(" ", tokens1);
